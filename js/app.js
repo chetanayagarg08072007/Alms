@@ -13,6 +13,11 @@ const ALMS = {
 
   // Unified API caller with cookie/token credentials support
   async api(endpoint, options = {}) {
+    // If hosted on GitHub Pages (static host without backend server), run purely offline fallback
+    if (window.location.hostname.includes('github.io')) {
+      return this.fallbackApi(endpoint, options);
+    }
+
     const defaultHeaders = {
       'Accept': 'application/json'
     };
@@ -41,7 +46,7 @@ const ALMS = {
 
     try {
       const res = await fetch(url, config);
-      if (res.status === 405 || (res.status === 404 && (window.location.hostname.includes('github.io') || window.location.protocol === 'file:'))) {
+      if (res.status === 405 || (res.status === 404 && window.location.protocol === 'file:')) {
         return this.fallbackApi(endpoint, options);
       }
       const data = await res.json().catch(() => ({}));
@@ -53,7 +58,7 @@ const ALMS = {
       }
       return data;
     } catch (err) {
-      if (window.location.hostname.includes('github.io') || window.location.protocol === 'file:') {
+      if (window.location.protocol === 'file:') {
         return this.fallbackApi(endpoint, options);
       }
       console.warn(`API call failed for ${url}:`, err.message);
@@ -74,12 +79,30 @@ const ALMS = {
     }
 
     if (cleanEndpoint === 'login') {
-      const mobile = body.mobile || '';
+      const mobile = String(body.mobile || '').trim();
       let role = 'donor';
       let name = 'Priya Sharma';
-      if (mobile === '9876543212' || mobile.includes('vol')) { role = 'volunteer'; name = 'Rahul Sharma'; }
-      else if (mobile === '9876543211' || mobile.includes('ngo')) { role = 'ngo'; name = 'Asha Deep Shelter'; }
-      const user = { id: 1, name, mobile, role, donorType: 'individual' };
+
+      // Check if user was registered in localStorage
+      const registeredUsers = JSON.parse(localStorage.getItem('alms_registered_users') || '[]');
+      const found = registeredUsers.find(u => u.mobile === mobile || u.email === mobile);
+      if (found) {
+        localStorage.setItem('alms_user', JSON.stringify(found));
+        localStorage.setItem('alms_token', 'demo-token');
+        return { success: true, user: found, token: 'demo-token' };
+      }
+
+      if (mobile === '9876543212' || mobile.toLowerCase().includes('vol')) {
+        role = 'volunteer';
+        name = 'Rahul Sharma';
+      } else if (mobile === '9876543211' || mobile.toLowerCase().includes('ngo')) {
+        role = 'ngo';
+        name = 'Asha Deep Shelter & Care';
+      } else if (mobile) {
+        name = mobile.split('@')[0];
+      }
+
+      const user = { id: 1, name, mobile, role, donorType: 'individual', hasBlueTick: true, has80G: true };
       localStorage.setItem('alms_user', JSON.stringify(user));
       localStorage.setItem('alms_token', 'demo-token');
       return { success: true, user, token: 'demo-token' };

@@ -19,6 +19,9 @@ function showToast(message, type = "success") {
 }
 
 async function api(path, options = {}) {
+  if (typeof ALMS !== "undefined" && typeof ALMS.api === "function") {
+    return ALMS.api(path, options);
+  }
   const res = await fetch(path, options);
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || "Request failed");
