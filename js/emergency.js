@@ -43,18 +43,22 @@ const ALMS_EMERGENCY = {
     container.innerHTML = `
       <div class="fade-in">
         <!-- Emergency Alert Banner -->
-        <div class="card card-beige" style="border: 2px solid var(--color-danger); margin-bottom: var(--sp-6);">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
-            <div>
+        <div class="card card-beige" style="border: 2px solid var(--color-danger); margin-bottom: var(--sp-6); overflow: hidden; padding: 0;">
+          <div style="position: relative; max-height: 240px; overflow: hidden;">
+            <img src="../images/dont-forget-us.jpg" alt="Crisis Relief Needed" style="width: 100%; height: 220px; object-fit: cover; filter: brightness(0.85);" onerror="this.style.display='none'">
+            <div style="position: absolute; top: 16px; left: 16px;">
               <span class="badge badge-danger" style="font-size:0.85rem; padding:6px 12px;">🔴 ACTIVE DISASTER CRISIS RELIEF</span>
-              <h2 style="font-size:1.4rem; font-weight:800; color:var(--alms-brown-dark); margin:8px 0 4px;">${c.title}</h2>
+            </div>
+            <div style="position: absolute; top: 16px; right: 16px;">
+              <span class="badge badge-success" style="font-size:0.85rem;">✔ Field Authenticated</span>
+            </div>
+          </div>
+          <div style="padding: var(--sp-6);">
+            <div>
+              <h2 style="font-size:1.4rem; font-weight:800; color:var(--alms-brown-dark); margin:0 0 6px;">${c.title}</h2>
               <p style="font-size:0.9rem; color:var(--color-text-soft);"><b>Cause:</b> ${c.cause}</p>
               <div style="font-size:0.85rem; color:var(--color-text-muted); margin-top:4px;">📍 <b>Relief Zone:</b> ${c.location}</div>
             </div>
-            <div style="text-align:right;">
-              <span class="badge badge-success" style="font-size:0.85rem;">✔ Authenticated with Field Proof</span>
-            </div>
-          </div>
 
           <!-- Rapid 1-Hour Collection Point Mode -->
           <div class="card card-cream" style="margin: 16px 0; padding:14px; border-left:4px solid var(--alms-brown);">

@@ -92,10 +92,13 @@ const ALMS_CAREME = {
 
     container.innerHTML = `
       <div class="fade-in">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-6); flex-wrap:wrap; gap:12px;">
-          <div>
-            <h2 class="dashboard-page-title" data-i18n="careme_nearby_title">Nearby Individual Meal Requests</h2>
-            <p class="dashboard-page-sub">Direct one-on-one connection. Accept a request and coordinate a safe public meetup to deliver food.</p>
+        <!-- CareMe Hero Card -->
+        <div class="card card-cream" style="margin-bottom:var(--sp-6); display:flex; gap:20px; align-items:center; flex-wrap:wrap; padding: var(--sp-5);">
+          <img src="../images/child-bread.jpg" alt="CareMeal - One Meal One Person" style="width:120px; height:120px; border-radius:var(--radius-lg); object-fit:cover;" onerror="this.style.display='none'">
+          <div style="flex:1; min-width:240px;">
+            <span class="badge badge-brown" style="font-size:0.75rem; margin-bottom:6px;">❤️ CAREMEAL DIRECT RESCUE</span>
+            <h2 class="dashboard-page-title" style="margin:4px 0;" data-i18n="careme_nearby_title">Nearby Individual Meal Requests</h2>
+            <p class="dashboard-page-sub" style="margin-bottom:0;">Direct one-on-one connection. Accept a request and coordinate a safe public meetup to deliver hot nutritious food.</p>
           </div>
         </div>
 
