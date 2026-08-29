@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALMS — CareMe (One Meal, One Person)</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header scrolled">
+    <div class="container">
+      <a href="../index.html" class="header-brand">
+        <img src="../images/alms-logo.jpeg" alt="ALMS Logo" class="header-logo" onerror="this.style.display='none'">
+        <div class="header-brand-text">
+          <div class="header-wordmark">alms</div>
+          <div class="header-tagline" data-i18n="tagline">From Surplus to Smiles.</div>
+        </div>
+        <div class="logo-particles">
+          <span class="particle p-1">🌾</span>
+          <span class="particle p-2">🍱</span>
+          <span class="particle p-3">🍃</span>
+          <span class="particle p-4">🍲</span>
+          <span class="particle p-5">✨</span>
+        </div>
+      </a>
+
+      <nav class="header-nav">
+        <a href="../index.html" data-i18n="nav_home">Home</a>
+        <a href="donor.html" data-i18n="role_donator">Donator</a>
+        <a href="volunteer.html" data-i18n="role_volunteer">Volunteer</a>
+        <a href="ngo.html" data-i18n="role_ngo">NGO</a>
+        <a href="careme.html" class="active" data-i18n="role_careme">CareMeal</a>
+        <a href="celebration.html" data-i18n="role_celebration">Celebration</a>
+        <a href="charity.html" data-i18n="role_charity">Charity Food</a>
+        <a href="map.html" data-i18n="nav_map">Live Map</a>
+      </nav>
+
+      <div style="display:flex; align-items:center; gap:10px; margin-left:auto;">
+        <select id="languageSelector" class="lang-select" aria-label="Select Language">
+          <option value="en">English 🇬🇧</option>
+          <option value="hi">हिंदी 🇮🇳</option>
+          <option value="mr">मराठी 🇮🇳</option>
+          <option value="te">తెలుగు 🇮🇳</option>
+        </select>
+        <button id="headerNotifBell" class="notif-bell" aria-label="Notifications">
+          <span class="bell-icon">🔔</span>
+          <span class="notif-badge">3</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notifications Panel -->
+  <div id="notifPanel" class="notif-panel">
+    <div class="notif-panel-header">
+      <div class="notif-panel-title" data-i18n="notif_header">🔔 Notifications</div>
+      <button class="btn btn-sm btn-ghost" onclick="ALMS.markAllNotificationsRead()" data-i18n="notif_mark_all_read">Mark all as read</button>
+    </div>
+    <div class="notif-list" id="notifPanelList"></div>
+    <div class="notif-panel-footer">
+      <a href="notifications.html" style="font-size:0.8rem; font-weight:600; color:var(--alms-brown);" data-i18n="btn_view_details">Open Notification Center →</a>
+    </div>
+  </div>
+
+  <div class="page-wrapper">
+    <div class="section">
+      <div class="container" id="caremeMainContent">
+        <!-- Rendered dynamically by careme.js -->
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 ALMS Platform. All rights reserved.</div>
+        <div data-i18n="footer_rights">ALMS Humanitarian Platform. From Surplus to Smiles.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/careme.js"></script>
+</body>
+</html>

@@ -1,168 +1,485 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ALMS — Donate food, share hope</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALMS — From Surplus to Smiles</title>
+  
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS for Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <!-- Design System & Custom Animations -->
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
-  <header class="site">
-    <div class="wrap header-inner">
-      <a class="brand" href="index.html">
-        <img src="images/alms-logo.jpeg" alt="ALMS logo">
-        <div>
-          <h1>ALMS</h1>
-          <p data-t="tagline">Donate food, share hope.</p>
+
+  <!-- ===================================================
+       SITE HEADER (Fixed, Scroll Transparency Transition, Logo Hover Particles)
+       =================================================== -->
+  <header class="site-header transparent">
+    <div class="container">
+      <!-- Logo + Hover Particle Effect + Smooth Home Click -->
+      <a href="index.html" class="header-brand" title="ALMS Homepage">
+        <img src="images/alms-logo.jpeg" alt="ALMS Logo - From Surplus to Smiles" class="header-logo" onerror="this.style.display='none'">
+        <div class="header-brand-text">
+          <div class="header-wordmark">alms</div>
+          <div class="header-tagline tagline-animate" data-i18n="tagline">From Surplus to Smiles.</div>
+        </div>
+
+        <!-- Food / Grain / Leaf Particles that float on hover -->
+        <div class="logo-particles">
+          <span class="particle p-1">🌾</span>
+          <span class="particle p-2">🍱</span>
+          <span class="particle p-3">🍃</span>
+          <span class="particle p-4">🍲</span>
+          <span class="particle p-5">✨</span>
         </div>
       </a>
-      <nav class="links">
-        <a href="#donate" data-t="donate">Donate</a>
-        <a href="#request" data-t="need">Need food</a>
-        <a href="pool.html" data-t="pool">Community pool</a>
-        <a href="dashboard.html">Records</a>
-        <a href="login.html">Log In</a>
-        <a class="cta" href="registration.html?role=volunteer" data-t="vol">Volunteer</a>
-        <select id="language" class="lang" aria-label="Language">
-          <option value="en">English</option>
-          <option value="hi">हिंदी</option>
-          <option value="mr">मराठी</option>
-          <option value="ta">தமிழ்</option>
-        </select>
+
+      <!-- Header Navigation -->
+      <nav class="header-nav">
+        <a href="index.html" class="active" data-i18n="nav_home">Home</a>
+        <a href="pages/donor.html" data-i18n="role_donator">Donator</a>
+        <a href="pages/volunteer.html" data-i18n="role_volunteer">Volunteer</a>
+        <a href="pages/ngo.html" data-i18n="role_ngo">NGO</a>
+        <a href="pages/careme.html" data-i18n="role_careme">CareMeal</a>
+        <a href="pages/celebration.html" data-i18n="role_celebration">Celebration</a>
+        <a href="pages/charity.html" data-i18n="role_charity">Charity Food</a>
+        <a href="pages/map.html" data-i18n="nav_map">Live Map</a>
       </nav>
+
+      <div style="display:flex; align-items:center; gap:10px; margin-left:auto;">
+        <!-- Multilingual Language Selector (English, Hindi, Marathi, Telugu) -->
+        <select id="languageSelector" class="lang-select" aria-label="Select Language">
+          <option value="en">English 🇬🇧</option>
+          <option value="hi">हिंदी 🇮🇳</option>
+          <option value="mr">मराठी 🇮🇳</option>
+          <option value="te">తెలుగు 🇮🇳</option>
+        </select>
+
+        <!-- Notification Bell with Dynamic Unread Badge -->
+        <button id="headerNotifBell" class="notif-bell" aria-label="Notifications" title="Notifications">
+          <span class="bell-icon">🔔</span>
+          <span class="notif-badge">3</span>
+        </button>
+
+        <!-- Mobile Menu Hamburger -->
+        <button class="mobile-menu-btn" aria-label="Toggle Navigation Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="wrap">
-    <div class="offline">Start the ALMS server with <code>npm start</code> so forms can save to the database.</div>
+  <!-- Universal Notifications Dropdown Panel -->
+  <div id="notifPanel" class="notif-panel">
+    <div class="notif-panel-header">
+      <div class="notif-panel-title" data-i18n="notif_header">🔔 Notifications</div>
+      <button class="btn btn-sm btn-ghost" onclick="ALMS.markAllNotificationsRead()" data-i18n="notif_mark_all_read">Mark all as read</button>
+    </div>
+    <div class="notif-filters">
+      <button class="notif-filter-btn active" onclick="ALMS.renderNotifPanel('all')" data-i18n="notif_filter_all">All</button>
+      <button class="notif-filter-btn" onclick="ALMS.renderNotifPanel('unread')" data-i18n="notif_filter_unread">Unread</button>
+      <button class="notif-filter-btn" onclick="ALMS.renderNotifPanel('requests')" data-i18n="notif_filter_requests">Requests</button>
+      <button class="notif-filter-btn" onclick="ALMS.renderNotifPanel('donations')" data-i18n="notif_filter_donations">Donations</button>
+      <button class="notif-filter-btn" onclick="ALMS.renderNotifPanel('updates')" data-i18n="notif_filter_updates">Updates</button>
+    </div>
+    <div class="notif-list" id="notifPanelList">
+      <!-- Populated dynamically by app.js -->
+    </div>
+    <div class="notif-panel-footer">
+      <a href="pages/notifications.html" style="font-size:0.8rem; font-weight:600; color:var(--alms-brown);" data-i18n="btn_view_details">Open Notification Center →</a>
+    </div>
+  </div>
 
-    <section class="card carousel">
-      <img class="slide active" src="images/sharing.jpeg" alt="Food sharing">
-      <img class="slide" src="images/meal-distribution.jpeg" alt="Meal distribution">
-      <img class="slide" src="images/community-meal.jpeg" alt="Community meal">
-      <div class="caption">
-        <h2 data-t="hero">Food belongs on plates.</h2>
-        <p data-t="heroSub">Donate surplus meals. ALMS matches them with nearby people, NGOs and volunteers.</p>
-      </div>
-      <div class="dots"></div>
-    </section>
+  <!-- ===================================================
+       PAGE CONTENT WRAPPER
+       =================================================== -->
+  <div class="page-wrapper">
 
-    <section class="card">
-      <h2 data-t="start">Get started</h2>
-      <p class="lead" data-t="startDesc">Choose how you want to help — every role is saved in the ALMS database.</p>
-      <div class="grid roles">
-        <a href="registration.html?role=volunteer"><button class="role" type="button"><span class="icon">🙋</span><span data-t="vol">Volunteer</span><small data-t="volSub">Register & collect</small></button></a>
-        <a href="registration.html?role=ngo"><button class="role" type="button"><span class="icon">🏠</span><span data-t="ngo">NGO / Shelter</span><small data-t="ngoSub">Register demand</small></button></a>
-        <button class="role" type="button" data-scroll="donate"><span class="icon">🍱</span><span data-t="donate">Donate</span><small data-t="donateSub">Post food</small></button>
-        <a href="registration.html?role=religious"><button class="role" type="button"><span class="icon">🛕</span><span data-t="religious">Religious place</span><small data-t="religiousSub">Temple / Gurudwara</small></button></a>
-        <a href="pool.html"><button class="role" type="button"><span class="icon">🤝</span><span data-t="pool">Community pool</span><small data-t="poolSub">See details</small></button></a>
-        <button class="role" type="button" data-scroll="request"><span class="icon">🧡</span><span data-t="need">Need food</span><small data-t="needSub">Individual request</small></button>
-      </div>
-    </section>
-
-    <section class="grid two">
-      <section class="card" id="donate">
-        <h2 data-t="donateTitle">Donate with ALMS</h2>
-        <p class="lead" data-t="donateDesc">Choose a donation type. Posts are stored and counted toward the community pool.</p>
-        <div class="tabs">
-          <button class="active" type="button" data-mode="regular" data-t="regular">Regular donation</button>
-          <button type="button" data-mode="collab" data-t="collab">Collab donation</button>
-          <button type="button" data-mode="bulk" data-t="bulk">Bulk donation</button>
+    <!-- ===================================================
+         1. HERO IMAGE CAROUSEL (Provided images slots)
+         =================================================== -->
+    <section class="hero-section">
+      <div class="carousel-track" id="heroTrack">
+        <!-- Slide 1 -->
+        <div class="carousel-slide active">
+          <img src="images/sharing.jpeg" alt="Food Sharing" onerror="this.src='images/alms-logo.jpeg'">
+          <div class="carousel-overlay"></div>
+          <div class="carousel-caption">
+            <div class="tagline-animated" data-i18n="tagline">From Surplus to Smiles.</div>
+            <h1 data-i18n="hero_slide1_title">Surplus Meals, Pure Smiles</h1>
+            <p data-i18n="hero_slide1_sub">Bridging the gap between leftover feast food and hungry families in minutes.</p>
+            <div style="display:flex; gap:12px; margin-top:16px; flex-wrap:wrap;">
+              <a href="pages/donor.html" class="btn btn-primary btn-lg" data-i18n="hero_cta_donate">Start Donating</a>
+              <a href="pages/volunteer.html" class="btn btn-secondary btn-lg" data-i18n="hero_cta_volunteer">Become a Volunteer</a>
+            </div>
+          </div>
         </div>
-        <div id="donationForm"></div>
-      </section>
-      <section class="card">
-        <h2 data-t="ai">Priority engine</h2>
-        <p data-t="aiDesc">Expiry · urgency · people fed · distance · weather · volunteers</p>
-        <div class="metric"><b id="statDonations">—</b><span data-t="statDonations">Donations stored</span></div>
-        <div class="metric"><b>96 priority</b><span data-t="priorityOne">Cooked meals · 45 min left</span></div>
-        <div class="metric"><b>87 priority</b><span data-t="priorityTwo">Wedding food · feeds 250</span></div>
-      </section>
-    </section>
 
-    <section class="grid two">
-      <section class="card">
-        <h2 data-t="alerts">Demand alerts & reminders</h2>
-        <p data-t="alertsDesc">Restaurants receive a surplus reminder before closing.</p>
-        <div class="tabs">
-          <button id="alertBtn" type="button" data-t="sendAlert">Send demand alert</button>
-          <button id="reminderBtn" type="button" class="btn-ghost" data-t="reminder">Turn on reminders</button>
+        <!-- Slide 2 -->
+        <div class="carousel-slide">
+          <img src="images/meal-distribution.jpeg" alt="Meal Distribution" onerror="this.src='images/alms-logo.jpeg'">
+          <div class="carousel-overlay"></div>
+          <div class="carousel-caption">
+            <div class="tagline-animated" data-i18n="tagline">From Surplus to Smiles.</div>
+            <h1 data-i18n="hero_slide2_title">Zero Waste, Maximum Dignity</h1>
+            <p data-i18n="hero_slide2_sub">Empowering local volunteers and certified NGOs with real-time food rescue dispatch.</p>
+            <div style="display:flex; gap:12px; margin-top:16px; flex-wrap:wrap;">
+              <a href="pages/ngo.html" class="btn btn-primary btn-lg" data-i18n="role_ngo">NGO Food Demands</a>
+              <a href="pages/map.html" class="btn btn-secondary btn-lg" data-i18n="hero_cta_map">View Live Support Map</a>
+            </div>
+          </div>
         </div>
-        <div class="note" id="alertNote"></div>
-      </section>
-      <section class="card emergency">
-        <h2 data-t="emergency">Emergency donation</h2>
-        <p data-t="emergencyDesc">Proof is compulsory for urgent relief posts.</p>
-        <form id="emergencyForm">
-          <label>Proof photo / PDF
-            <input required name="proof" type="file" accept="image/*,.pdf">
-          </label>
-          <button class="submit danger" data-t="proof" type="submit">Post with proof</button>
-        </form>
-        <div class="note" id="emergencyNote"></div>
-      </section>
-    </section>
 
-    <section class="card" id="request">
-      <h2 data-t="request">Request food</h2>
-      <p class="lead" data-t="requestDesc">For hospital caregivers, patients’ families, elderly people and anyone in need.</p>
-      <form class="form-grid" id="requestForm">
-        <label>Name <input required name="name" placeholder="Your name" data-ph="name"></label>
-        <label>Hospital / locality <input required name="place" placeholder="Hospital / locality" data-ph="place"></label>
-        <label>Meals needed <input required name="meals" type="number" min="1" placeholder="Meals needed" data-ph="meals"></label>
-        <label>Contact number <input required name="contact" placeholder="Contact number" data-ph="contact"></label>
-        <button type="submit" data-t="requestBtn">Request food</button>
-      </form>
-      <div class="note" id="requestNote"></div>
-    </section>
-
-    <section class="card">
-      <h2 data-t="map">Live rescue map</h2>
-      <div class="map">
-        <i class="pin green" style="top:25%;left:20%"></i>
-        <i class="pin red" style="top:43%;left:67%"></i>
-        <i class="pin blue" style="top:64%;left:51%"></i>
+        <!-- Slide 3 -->
+        <div class="carousel-slide">
+          <img src="images/community-meal.jpeg" alt="Community Meal" onerror="this.src='images/alms-logo.jpeg'">
+          <div class="carousel-overlay"></div>
+          <div class="carousel-caption">
+            <div class="tagline-animated" data-i18n="tagline">From Surplus to Smiles.</div>
+            <h1 data-i18n="hero_slide3_title">Every Grain Has a Purpose</h1>
+            <p data-i18n="hero_slide3_sub">Connect directly through CareMe, Priority Pools, and Disaster Relief.</p>
+            <div style="display:flex; gap:12px; margin-top:16px; flex-wrap:wrap;">
+              <a href="pages/careme.html" class="btn btn-primary btn-lg" data-i18n="role_careme">Try CareMeal</a>
+              <a href="pages/celebration.html" class="btn btn-secondary btn-lg" data-i18n="role_celebration">Celebrate With Us</a>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="legend">
-        <span class="tag green" data-t="green">Green: food</span>
-        <span class="tag red" data-t="red">Red: hunger</span>
-        <span class="tag blue" data-t="blue">Blue: volunteers</span>
+
+      <!-- Carousel Navigation Controls -->
+      <div class="carousel-dots" id="heroDots">
+        <button class="carousel-dot active" onclick="heroGoTo(0)"></button>
+        <button class="carousel-dot" onclick="heroGoTo(1)"></button>
+        <button class="carousel-dot" onclick="heroGoTo(2)"></button>
+      </div>
+      <div class="carousel-controls">
+        <button class="carousel-btn" onclick="heroPrev()" aria-label="Previous Slide">‹</button>
+        <button class="carousel-btn" onclick="heroNext()" aria-label="Next Slide">›</button>
       </div>
     </section>
 
-    <a href="pool.html">
-      <section class="card pool">
+
+    <!-- ===================================================
+         2. PROMINENT ROLE SELECTION (6 Options as per Spec)
+         =================================================== -->
+    <section class="section">
+      <div class="container">
+        <div class="text-center" style="margin-bottom: var(--sp-6);">
+          <h2 class="section-title" data-i18n="role_select_title">Join the ALMS Ecosystem</h2>
+          <p class="section-subtitle" style="margin: 0 auto;" data-i18n="role_select_sub">
+            Select your purpose to connect surplus food with smiles, dignity, and real-time community care.
+          </p>
+        </div>
+
+        <div class="role-grid">
+          <!-- 1. Donator -->
+          <a href="pages/donor.html" class="role-card">
+            <div class="role-card-emoji">🍱</div>
+            <div class="role-card-name" data-i18n="role_donator">Donator</div>
+            <div class="role-card-desc" data-i18n="role_donator_desc">Share individual surplus or large commercial catering meals.</div>
+          </a>
+
+          <!-- 2. Volunteer -->
+          <a href="pages/volunteer.html" class="role-card">
+            <div class="role-card-emoji">🙋</div>
+            <div class="role-card-name" data-i18n="role_volunteer">Volunteer</div>
+            <div class="role-card-desc" data-i18n="role_volunteer_desc">Join, pick up, and deliver meals across neighborhoods.</div>
+          </a>
+
+          <!-- 3. NGO -->
+          <a href="pages/ngo.html" class="role-card">
+            <div class="role-card-emoji">🏠</div>
+            <div class="role-card-name" data-i18n="role_ngo">NGO</div>
+            <div class="role-card-desc" data-i18n="role_ngo_desc">Request food, manage priority pools, and feed communities.</div>
+          </a>
+
+          <!-- 4. Charity Food -->
+          <a href="pages/charity.html" class="role-card">
+            <div class="role-card-emoji">🛕</div>
+            <div class="role-card-name" data-i18n="role_charity">Charity Food</div>
+            <div class="role-card-desc" data-i18n="role_charity_desc">Host mass community kitchens & temple / gurdwara langars.</div>
+          </a>
+
+          <!-- 5. CareMeal -->
+          <a href="pages/careme.html" class="role-card">
+            <div class="role-card-emoji">🧡</div>
+            <div class="role-card-name" data-i18n="role_careme">CareMeal</div>
+            <div class="role-card-desc" data-i18n="role_careme_desc">One-on-one direct meal request and personal donor matching.</div>
+          </a>
+
+          <!-- 6. Celebration -->
+          <a href="pages/celebration.html" class="role-card">
+            <div class="role-card-emoji">🎉</div>
+            <div class="role-card-name" data-i18n="role_celebration">Celebration</div>
+            <div class="role-card-desc" data-i18n="role_celebration_desc">Celebrate birthdays & milestones with shelters and orphanages.</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ===================================================
+         3. LIVE NEED & SUPPORT MAP SECTION (Red/Green/Blue)
+         =================================================== -->
+    <section class="section section-sm bg-cream">
+      <div class="container">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-4); flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 class="section-title" data-i18n="map_title">Live Need & Support Map</h2>
+            <p class="section-subtitle" data-i18n="map_sub">Real-time interactive geospatial view of hunger hotspots, donors, and rescue couriers.</p>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <a href="pages/map.html" class="btn btn-primary btn-sm" data-i18n="map_view_full">Open Fullscreen Map →</a>
+          </div>
+        </div>
+
+        <div class="map-container" style="height: 440px;">
+          <div id="homeMapPreview" style="width:100%; height:100%;"></div>
+          <div class="map-legend">
+            <div class="map-legend-item">
+              <span class="map-legend-dot need"></span>
+              <span data-i18n="map_legend_need">🔴 Need Food</span>
+            </div>
+            <div class="map-legend-item">
+              <span class="map-legend-dot donor"></span>
+              <span data-i18n="map_legend_donor">🟢 Donor</span>
+            </div>
+            <div class="map-legend-item">
+              <span class="map-legend-dot vol"></span>
+              <span data-i18n="map_legend_vol">🔵 Volunteer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ===================================================
+         4. PRIORITY POOL PREVIEW
+         =================================================== -->
+    <section class="section">
+      <div class="container">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-4); flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 class="section-title" data-i18n="pool_title">Priority Pool</h2>
+            <p class="section-subtitle" data-i18n="pool_sub">Real-time NGO food requests ranked dynamically by calculated Priority Index.</p>
+          </div>
+          <a href="pages/ngo.html" class="btn btn-outline btn-sm">Manage Pool →</a>
+        </div>
+
+        <div id="homePoolPreview">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ===================================================
+         5. EMERGENCY RELIEF BANNER
+         =================================================== -->
+    <section class="section-sm">
+      <div class="container">
+        <div class="emergency-banner">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+            <div>
+              <span class="badge badge-warning" style="background:#FFF3E0; color:#E65100; margin-bottom:6px;">
+                ⚠️ CRISIS INTERVENTION PORTAL
+              </span>
+              <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:4px;" data-i18n="emergency_title">
+                Emergency & Disaster Food Pool
+              </h2>
+              <p style="opacity:0.9; font-size:0.9rem; max-width:600px;" data-i18n="emergency_sub">
+                Immediate mass food and relief dispatch for floods, earthquakes, and crises.
+              </p>
+            </div>
+            <a href="pages/emergency.html" class="btn btn-primary" style="background:#fff; color:#C62828; font-weight:700;">
+              🚨 Access Emergency Portal →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ===================================================
+         6. FOOD WASTE & HUNGER NEWS CORNER ("Food Matters")
+         =================================================== -->
+    <section class="section bg-cream">
+      <div class="container">
+        <div style="margin-bottom: var(--sp-6);">
+          <h2 class="section-title" data-i18n="news_title">Food Matters — Beyond the Plate</h2>
+          <p class="section-subtitle" data-i18n="news_sub">Inspiring stories, global food security updates, and local food rescue action.</p>
+        </div>
+
+        <div id="newsCarouselContainer">
+          <!-- Rendered dynamically by news.js -->
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ===================================================
+         7. DONOR CARBON IMPACT PREVIEW
+         =================================================== -->
+    <section class="section">
+      <div class="container">
+        <div class="card card-beige">
+          <div id="carbonTrackerContainer">
+            <!-- Rendered dynamically by carbon.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div> <!-- End page-wrapper -->
+
+
+  <!-- ===================================================
+       FOOTER
+       =================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h2>ALMS</h2>
+          <div class="footer-tagline" data-i18n="tagline">"From Surplus to Smiles."</div>
+          <p class="footer-desc">
+            ALMS is a food donation and food-rescue platform connecting surplus food with people and organizations that need it through donors, NGOs, volunteers, CareMe, celebrations, and real-time mapping.
+          </p>
+        </div>
+
         <div>
-          <h2 data-t="poolTitle">Green Park community pool</h2>
-          <p id="poolDesc" data-t="poolDesc">163 of 250 meals collected · Tap for details</p>
+          <div class="footer-heading">Ecosystem</div>
+          <div class="footer-links">
+            <a href="pages/donor.html" data-i18n="role_donator">Donator</a>
+            <a href="pages/volunteer.html" data-i18n="role_volunteer">Volunteer</a>
+            <a href="pages/ngo.html" data-i18n="role_ngo">NGO</a>
+            <a href="pages/charity.html" data-i18n="role_charity">Charity Food</a>
+          </div>
         </div>
-        <div class="bar"><i id="poolBar"></i></div>
-      </section>
-    </a>
 
-    <section class="grid two">
-      <section class="card">
-        <h2 data-t="carbon">Carbon footprint</h2>
-        <div class="metric"><b id="carbonValue">92 kg CO₂</b><span data-t="carbonDesc">estimated emissions avoided from stored meals</span></div>
-      </section>
-      <section class="card">
-        <h2 data-t="badge">Network so far</h2>
-        <div class="metric"><b id="statNetwork">—</b><span data-t="badgeDesc">volunteers and NGO / shelter registrations</span></div>
-      </section>
-    </section>
-  </main>
+        <div>
+          <div class="footer-heading">Features</div>
+          <div class="footer-links">
+            <a href="pages/careme.html" data-i18n="role_careme">CareMeal</a>
+            <a href="pages/celebration.html" data-i18n="role_celebration">Celebration</a>
+            <a href="pages/emergency.html" data-i18n="emergency_title">Emergency Pool</a>
+            <a href="pages/map.html" data-i18n="nav_map">Live Support Map</a>
+          </div>
+        </div>
 
-  <footer class="site">
-    <div class="wrap footer-inner">
-      <div>ALMS · surplus food rescue for local communities</div>
-      <div><a href="dashboard.html">View stored records</a></div>
+        <div>
+          <div class="footer-heading">Community</div>
+          <div class="footer-links">
+            <a href="pages/notifications.html" data-i18n="nav_notifications">Notifications</a>
+            <a href="#impact" data-i18n="nav_impact">Carbon Impact</a>
+            <a href="#news" data-i18n="nav_news">Food Matters</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 ALMS Platform. All rights reserved.</div>
+        <div data-i18n="footer_rights">ALMS Humanitarian Platform. From Surplus to Smiles.</div>
+      </div>
     </div>
   </footer>
 
-  <script src="js/common.js"></script>
-  <script src="js/home.js"></script>
+
+  <!-- ===================================================
+       SCRIPTS
+       =================================================== -->
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Core App Scripts -->
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/carbon.js"></script>
+  <script src="js/news.js"></script>
+
+  <!-- Home Specific Behavior -->
+  <script>
+    // Hero Carousel Auto Play & Navigation
+    let heroCurrent = 0;
+    const heroTrack = document.getElementById('heroTrack');
+    const heroSlides = document.querySelectorAll('.carousel-slide');
+    const heroDots = document.querySelectorAll('#heroDots .carousel-dot');
+
+    function updateHero() {
+      if (heroTrack) {
+        heroTrack.style.transform = `translateX(-${heroCurrent * 100}%)`;
+      }
+      heroSlides.forEach((s, idx) => s.classList.toggle('active', idx === heroCurrent));
+      heroDots.forEach((d, idx) => d.classList.toggle('active', idx === heroCurrent));
+    }
+
+    function heroNext() {
+      heroCurrent = (heroCurrent + 1) % heroSlides.length;
+      updateHero();
+    }
+    function heroPrev() {
+      heroCurrent = (heroCurrent - 1 + heroSlides.length) % heroSlides.length;
+      updateHero();
+    }
+    function heroGoTo(idx) {
+      heroCurrent = idx;
+      updateHero();
+    }
+
+    setInterval(heroNext, 6000);
+
+    // Initialize Map Preview on Home
+    document.addEventListener('DOMContentLoaded', () => {
+      ALMS_MAP.init('homeMapPreview', { zoom: 13, showRoute: true });
+      renderHomePoolPreview();
+    });
+
+    function renderHomePoolPreview() {
+      const container = document.getElementById('homePoolPreview');
+      if (!container) return;
+      const pool = JSON.parse(localStorage.getItem('alms_priority_pool') || '[]');
+      const topItems = pool.slice(0, 2);
+
+      container.innerHTML = `
+        <div class="grid grid-2" style="gap: var(--sp-4);">
+          ${topItems.map((item, idx) => `
+            <div class="card pool-entry ${idx === 0 ? 'top-priority' : ''}">
+              <div class="pool-entry-rank">#${idx + 1}</div>
+              <div class="pool-entry-name">
+                ${item.ngoName}
+                <span class="badge ${item.isVeg ? 'badge-veg' : 'badge-nonveg'}">${item.isVeg ? 'Veg' : 'Non-Veg'}</span>
+                <span class="badge badge-danger">Priority Index: ${ALMS.calculatePriorityIndex(item.hungerPercent, item.distanceKm, item.expiryHours)}</span>
+              </div>
+              <div class="pool-entry-meta">
+                <span>📍 ${item.distanceKm} km</span> • <span>👥 ${item.mealsNeeded} Meals Needed</span> • <span>⏳ Ends ${item.expiryTime}</span>
+              </div>
+              <div class="progress-wrap" style="margin: 10px 0;">
+                <div class="progress-header">
+                  <span>${item.mealsCollected} / ${item.mealsNeeded} Meals</span>
+                  <span>${Math.round((item.mealsCollected / item.mealsNeeded) * 100)}%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill ${item.mealsCollected >= item.mealsNeeded ? 'complete' : ''}" style="width: ${(item.mealsCollected / item.mealsNeeded) * 100}%;"></div>
+                </div>
+              </div>
+              <div style="display:flex; justify-content:flex-end;">
+                <a href="pages/donor.html" class="btn btn-sm btn-primary">Fulfill in Priority Pool →</a>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+  </script>
 </body>
 </html>

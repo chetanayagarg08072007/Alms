@@ -3,94 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ALMS Community Pool</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <header class="site">
-    <div class="wrap header-inner">
-      <a class="brand" href="index.html">
-        <img src="images/alms-logo.jpeg" alt="ALMS logo">
-        <div>
-          <h1>ALMS</h1>
-          <p>Community meal pool</p>
-        </div>
-      </a>
-      <nav class="links">
-        <a href="index.html">Home</a>
-        <a class="cta" href="registration.html?role=volunteer">Volunteer</a>
-      </nav>
-    </div>
-  </header>
-  <main class="wrap page-narrow">
-    <div class="offline">Start the ALMS server with <code>npm start</code> so pool joins can be stored.</div>
-    <a class="back" href="index.html">← Back to ALMS</a>
-    <section class="card">
-      <h1 id="poolName">Green Park community pool</h1>
-      <p class="lead">Local residents, restaurants and volunteers are gathering meals for nearby families. Totals update from the database as donations are posted.</p>
-      <h2 id="pct" style="margin-top: 16px; color: var(--primary);">—</h2>
-      <div class="bar wide" style="margin-top: 8px;"><i id="poolBar"></i></div>
-      <p style="margin-top:12px" id="meals"></p>
-    </section>
-    <section class="card">
-      <h2>How allocation works</h2>
-      <p class="lead" style="margin-bottom: 12px;">ALMS assigns food based on local hunger demand, food expiry, distance, volunteer availability and the locality’s previous pickup success.</p>
-      <form id="joinForm" class="grid" style="margin-top:14px">
-        <label>Your name <input required name="name" placeholder="Name"></label>
-        <label>Role
-          <select required name="role">
-            <option value="resident">Resident</option>
-            <option value="volunteer">Volunteer</option>
-            <option value="restaurant">Restaurant</option>
-            <option value="ngo">NGO / Shelter</option>
-          </select>
-        </label>
-        <label>Contact (optional) <input name="contact" placeholder="Phone or email"></label>
-        <button type="submit" class="btn btn-primary">Join this pool</button>
-      </form>
-      <div class="note" id="joinNote"></div>
-    </section>
-    <section class="card">
-      <h2>Recent joins</h2>
-      <div id="joins" class="lead">Loading…</div>
-    </section>
-  </main>
-  <script src="js/common.js"></script>
+  <title>ALMS — Priority Pool</title>
   <script>
-    async function loadPool() {
-      const { pool, joins } = await api("/api/pool");
-      const pct = Math.min(100, Math.round((pool.collected_meals / pool.target_meals) * 100));
-      document.querySelector("#poolName").textContent = pool.name;
-      document.querySelector("#pct").textContent = pct + "% collected";
-      document.querySelector("#poolBar").style.width = pct + "%";
-      document.querySelector("#meals").innerHTML =
-        `<b>${pool.collected_meals} of ${pool.target_meals} meals</b> are ready.`;
-      document.querySelector("#joins").innerHTML = joins.length
-        ? joins.map((j) => `• ${j.name} (${j.role})`).join("<br>")
-        : "No joins yet — be the first.";
-    }
-    loadPool().catch(() => {
-      document.querySelector("#joins").textContent = "Could not load pool data.";
-    });
-    document.querySelector("#joinForm").onsubmit = async (e) => {
-      e.preventDefault();
-      const body = Object.fromEntries(new FormData(e.target).entries());
-      try {
-        await api("/api/pool/join", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-        setNote(document.querySelector("#joinNote"), "✓ You joined this pool. Your name is stored.");
-        e.target.reset();
-        loadPool();
-      } catch (err) {
-        setNote(document.querySelector("#joinNote"), err.message, true);
-      }
-    };
+    window.location.replace('pages/ngo.html');
   </script>
+</head>
+<body style="font-family:sans-serif; text-align:center; padding:50px;">
+  <p>Redirecting to ALMS Priority Pool...</p>
 </body>
 </html>

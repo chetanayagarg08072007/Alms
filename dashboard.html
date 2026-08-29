@@ -3,157 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ALMS — Live Dashboard & Records</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <header class="site">
-    <div class="wrap header-inner">
-      <a class="brand" href="index.html">
-        <img src="images/alms-logo.jpeg" alt="ALMS logo">
-        <div>
-          <h1>ALMS</h1>
-          <p>Rescue Network Records</p>
-        </div>
-      </a>
-      <nav class="links">
-        <a href="index.html">Home</a>
-        <a class="cta" href="registration.html?role=volunteer">Register</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <div class="offline">Start the ALMS server with <code>npm start</code> to load the live database.</div>
-    <a class="back" href="index.html">← Back to Overview</a>
-    
-    <section class="card">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
-        <div>
-          <h1>System Dashboard</h1>
-          <p class="lead">Live real-time ledger of surplus collections, urgent relief, and community volunteers.</p>
-        </div>
-      </div>
-      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 20px;" id="stats">
-        <div class="metric"><b>—</b><span>Loading statistics...</span></div>
-      </div>
-    </section>
-
-    <!-- Records Section with Quick Filters -->
-    <div style="display: flex; gap: 12px; margin: 24px 0 12px; overflow-x: auto; padding-bottom: 4px;">
-      <button class="btn btn-secondary active" onclick="showTab('donations')">🍱 Donations</button>
-      <button class="btn btn-secondary" onclick="showTab('requests')">🧡 Food Requests</button>
-      <button class="btn btn-secondary" onclick="showTab('registrations')">👥 Registrations</button>
-      <button class="btn btn-secondary" onclick="showTab('emergencies')">🚨 Emergencies</button>
-      <button class="btn btn-secondary" onclick="showTab('poolJoins')">🤝 Pool Volunteers</button>
-    </div>
-
-    <section class="card" id="tab-donations">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h2>Donation Activity</h2>
-      </div>
-      <div class="scroll" id="donations"></div>
-    </section>
-
-    <section class="card" id="tab-requests" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h2>Pending Food Requests</h2>
-      </div>
-      <div class="scroll" id="requests"></div>
-    </section>
-
-    <section class="card" id="tab-registrations" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h2>Registered Network Members</h2>
-      </div>
-      <div class="scroll" id="registrations"></div>
-    </section>
-
-    <section class="card" id="tab-emergencies" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h2>Emergency Relief Requests</h2>
-      </div>
-      <div class="scroll" id="emergencies"></div>
-    </section>
-
-    <section class="card" id="tab-poolJoins" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h2>Community Pool Contributors</h2>
-      </div>
-      <div class="scroll" id="poolJoins"></div>
-    </section>
-  </main>
-
-  <script src="js/common.js"></script>
+  <title>ALMS — Dashboard</title>
   <script>
-    function showTab(tabId) {
-      const tabs = ['donations', 'requests', 'registrations', 'emergencies', 'poolJoins'];
-      tabs.forEach(t => {
-        const el = document.querySelector(`#tab-${t}`);
-        if (el) el.style.display = (t === tabId) ? 'block' : 'none';
-      });
-      document.querySelectorAll('.btn-secondary').forEach(b => {
-        if (b.getAttribute('onclick')?.includes(tabId)) {
-          b.classList.add('active');
-          b.style.background = 'var(--primary-soft)';
-          b.style.borderColor = 'var(--primary)';
-          b.style.color = 'var(--primary)';
-        } else {
-          b.classList.remove('active');
-          b.style.background = 'var(--surface)';
-          b.style.borderColor = 'var(--border)';
-          b.style.color = 'var(--text-main)';
-        }
-      });
+    const user = JSON.parse(localStorage.getItem('alms_user') || 'null');
+    if (user) {
+      if (user.role === 'volunteer') window.location.replace('pages/volunteer.html');
+      else if (user.role === 'ngo') window.location.replace('pages/ngo.html');
+      else window.location.replace('pages/donor.html');
+    } else {
+      window.location.replace('index.html');
     }
-
-    function table(rows, columns) {
-      if (!rows || !rows.length) return "<p style='padding: 24px; text-align: center; color: var(--text-muted);'>No records found in this category yet.</p>";
-      return `<table>
-        <thead><tr>${columns.map((c) => `<th>${c.label}</th>`).join("")}</tr></thead>
-        <tbody>${rows.map((r) => `<tr>${columns.map((c) => {
-          let val = r[c.key] ?? "—";
-          if (c.key === "proof_file" && val !== "—") {
-            val = `<a href="/uploads/${val}" target="_blank" style="color: var(--primary); text-decoration: underline;">View File</a>`;
-          }
-          return `<td>${val}</td>`;
-        }).join("")}</tr>`).join("")}</tbody>
-      </table>`;
-    }
-
-    api("/api/dashboard").then((d) => {
-      const s = d.stats;
-      document.querySelector("#stats").innerHTML = `
-        <div class="metric"><b>${s.donations}</b><span>Donations posted · ${s.donationMeals} meals</span></div>
-        <div class="metric"><b>${s.requests}</b><span>Food requests · ${s.requestMeals} meals needed</span></div>
-        <div class="metric"><b>${s.volunteers + s.ngos}</b><span>Volunteers & NGO registrations</span></div>
-        <div class="metric"><b>${s.carbonKg} kg</b><span>Estimated emissions avoided</span></div>`;
-      
-      document.querySelector("#registrations").innerHTML = table(d.registrations, [
-        { key: "id", label: "ID" }, { key: "role", label: "Role" }, { key: "name", label: "Name" },
-        { key: "mobile", label: "Mobile" }, { key: "status", label: "Status" }, { key: "created_at", label: "Created" },
-      ]);
-      document.querySelector("#donations").innerHTML = table(d.donations, [
-        { key: "id", label: "ID" }, { key: "mode", label: "Mode" }, { key: "food_type", label: "Food Type" },
-        { key: "people_to_feed", label: "Meals" }, { key: "pickup_location", label: "Pickup Location" }, { key: "created_at", label: "Date & Time" },
-      ]);
-      document.querySelector("#requests").innerHTML = table(d.requests, [
-        { key: "id", label: "ID" }, { key: "name", label: "Requester Name" }, { key: "place", label: "Location" },
-        { key: "meals", label: "Meals Needed" }, { key: "contact", label: "Contact Phone" }, { key: "created_at", label: "Created" },
-      ]);
-      document.querySelector("#emergencies").innerHTML = table(d.emergencies, [
-        { key: "id", label: "ID" }, { key: "proof_file", label: "Document" }, { key: "status", label: "Verification Status" }, { key: "created_at", label: "Reported" },
-      ]);
-      document.querySelector("#poolJoins").innerHTML = table(d.poolJoins, [
-        { key: "id", label: "ID" }, { key: "name", label: "Volunteer / Member" }, { key: "role", label: "Role" }, { key: "contact", label: "Contact" }, { key: "created_at", label: "Joined" },
-      ]);
-
-      // Initialize default active styling
-      showTab('donations');
-    }).catch(() => {});
   </script>
+</head>
+<body style="font-family:sans-serif; text-align:center; padding:50px;">
+  <p>Redirecting to ALMS Dashboard...</p>
 </body>
 </html>

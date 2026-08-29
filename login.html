@@ -1,85 +1,210 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ALMS — Login</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
-  <header class="site">
-    <div class="wrap header-inner">
-      <a class="brand" href="index.html">
-        <img src="images/alms-logo.jpeg" alt="ALMS logo">
-        <div>
-          <h1>ALMS</h1>
-          <p>Food Rescue Network</p>
+
+  <!-- Site Header -->
+  <header class="site-header scrolled">
+    <div class="container">
+      <a href="index.html" class="header-brand">
+        <img src="images/alms-logo.jpeg" alt="ALMS Logo" class="header-logo" onerror="this.style.display='none'">
+        <div class="header-brand-text">
+          <div class="header-wordmark">alms</div>
+          <div class="header-tagline">From Surplus to Smiles.</div>
+        </div>
+        <div class="logo-particles">
+          <span class="particle p-1">🌾</span>
+          <span class="particle p-2">🍱</span>
+          <span class="particle p-3">🍃</span>
+          <span class="particle p-4">🍲</span>
+          <span class="particle p-5">✨</span>
         </div>
       </a>
-      <nav class="links">
+
+      <nav class="header-nav">
         <a href="index.html">Home</a>
-        <a href="registration.html">Register</a>
+        <a href="pages/donor.html">Donator</a>
+        <a href="pages/volunteer.html">Volunteer</a>
+        <a href="pages/ngo.html">NGO</a>
+        <a href="pages/map.html">Live Map</a>
       </nav>
     </div>
   </header>
 
-  <main class="wrap page-narrow">
-    <div class="offline">Start the ALMS server with <code>npm start</code> to connect to the database.</div>
-    <a class="back" href="index.html">← Back to ALMS</a>
-    
-    <section class="card auth-card">
-      <div class="card-header">
-        <h1>Welcome Back</h1>
-        <p class="lead">Log in to manage donations, requests, and volunteer tasks.</p>
+  <div class="page-wrapper">
+    <div class="section">
+      <div class="container" style="max-width: 460px; margin: 0 auto; padding: var(--sp-8) var(--sp-4);">
+
+        <div class="text-center" style="margin-bottom: var(--sp-8);">
+          <div style="font-size: 3rem; margin-bottom: 12px;">🍱</div>
+          <h1 class="text-h1" style="font-size: 2rem;">Welcome Back</h1>
+          <p class="text-soft">Login to your ALMS account to continue your mission of reducing food waste.</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="card" style="padding: var(--sp-7);">
+          <form id="loginForm" onsubmit="handleLogin(event)">
+
+            <div class="form-group">
+              <label class="form-label">Mobile Number or Email <span class="required">*</span></label>
+              <input
+                type="text"
+                id="loginMobile"
+                class="form-input"
+                placeholder="9876543210 or priya@example.com"
+                required
+                autocomplete="username"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Password <span class="required">*</span></label>
+              <div style="position:relative;">
+                <input
+                  type="password"
+                  id="loginPassword"
+                  class="form-input"
+                  placeholder="Enter your password"
+                  required
+                  autocomplete="current-password"
+                  style="padding-right: 48px;"
+                >
+                <button
+                  type="button"
+                  onclick="togglePasswordVisibility()"
+                  style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:1.1rem; color:var(--color-text-muted);"
+                  title="Show/Hide Password"
+                >👁️</button>
+              </div>
+            </div>
+
+            <!-- Error message area -->
+            <div id="loginError" style="display:none; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:var(--radius-md); padding:10px 14px; font-size:0.85rem; color:var(--color-danger); margin-bottom:var(--sp-4);">
+            </div>
+
+            <button type="submit" id="loginBtn" class="btn btn-primary btn-full btn-lg" style="margin-top: var(--sp-2);">
+              Login to ALMS →
+            </button>
+          </form>
+
+          <div style="text-align:center; margin-top: var(--sp-5); padding-top: var(--sp-5); border-top: 1px solid var(--border);">
+            <p class="text-soft" style="font-size: 0.875rem; margin-bottom: var(--sp-3);">Don't have an account? Join as:</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+              <a href="pages/donor.html" class="btn btn-sm btn-outline">🍱 Donor</a>
+              <a href="pages/volunteer.html" class="btn btn-sm btn-outline">🚴 Volunteer</a>
+              <a href="pages/ngo.html" class="btn btn-sm btn-outline">🏢 NGO</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Demo Accounts Info -->
+        <div class="card card-cream" style="margin-top: var(--sp-5); padding: var(--sp-4);">
+          <div style="font-size: 0.8rem; font-weight: 700; color: var(--alms-brown-dark); margin-bottom: 10px;">
+            🔐 Demo Seed Accounts (Password: <code>password123</code>)
+          </div>
+          <div style="display:grid; gap:6px; font-size:0.8rem; color:var(--color-text-soft);">
+            <div style="display:flex; justify-content:space-between;">
+              <span>🍱 Donor (Individual)</span>
+              <code style="color:var(--alms-brown-dark);">9876543210</code>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>🚴 Volunteer</span>
+              <code style="color:var(--alms-brown-dark);">9876543212</code>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>🏢 NGO</span>
+              <code style="color:var(--alms-brown-dark);">9876543211</code>
+            </div>
+          </div>
+        </div>
+
       </div>
+    </div>
+  </div>
 
-      <form id="loginForm" class="grid" style="margin-top: 20px;">
-        <label>Mobile Number
-          <input required name="mobile" type="tel" placeholder="Enter your 10-digit mobile number" autocomplete="username">
-        </label>
-        <label>Password
-          <input required name="password" type="password" placeholder="Enter your password" autocomplete="current-password">
-        </label>
-        <button type="submit" class="btn btn-primary" style="margin-top: 8px;">Log In</button>
-      </form>
-      <div class="note" id="loginNote"></div>
-
-      <div style="margin-top: 24px; text-align: center; font-size: 14px; color: var(--muted);">
-        Don't have an account yet? <a href="registration.html" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Join the Rescue Network</a>
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 ALMS Platform. All rights reserved.</div>
+        <div>ALMS Humanitarian Platform. From Surplus to Smiles.</div>
       </div>
-    </section>
-  </main>
+    </div>
+  </footer>
 
-  <script src="js/common.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
   <script>
-    document.querySelector("#loginForm").onsubmit = async (e) => {
-      e.preventDefault();
-      const submitBtn = e.target.querySelector("button[type=submit]");
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Logging in...";
-
-      const body = Object.fromEntries(new FormData(e.target).entries());
+    // Auto-redirect if already logged in
+    (async function() {
       try {
-        const res = await api("/api/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
-        });
-        showToast("✓ Logged in successfully!", "success");
-        setNote(document.querySelector("#loginNote"), "✓ Logged in successfully! Redirecting...");
-        setTimeout(() => {
-          window.location.href = "dashboard.html";
-        }, 1000);
-      } catch (err) {
-        setNote(document.querySelector("#loginNote"), err.message, true);
-        showToast(err.message, "error");
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Log In";
+        const res = await ALMS.api('/api/me');
+        if (res && res.user) {
+          redirectByRole(res.user.role);
+        }
+      } catch (e) {
+        // Not logged in — show form (default)
       }
-    };
+    })();
+
+    function redirectByRole(role) {
+      if (role === 'volunteer') window.location.replace('pages/volunteer.html');
+      else if (role === 'ngo') window.location.replace('pages/ngo.html');
+      else window.location.replace('pages/donor.html');
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+
+      const btn = document.getElementById('loginBtn');
+      const errorDiv = document.getElementById('loginError');
+      const mobile = document.getElementById('loginMobile').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      // Reset error
+      errorDiv.style.display = 'none';
+      errorDiv.textContent = '';
+
+      // Disable button
+      btn.disabled = true;
+      btn.textContent = 'Logging in...';
+
+      try {
+        const res = await ALMS.api('/api/login', {
+          method: 'POST',
+          body: JSON.stringify({ mobile, password })
+        });
+
+        if (res && res.user) {
+          localStorage.setItem('alms_user', JSON.stringify(res.user));
+          ALMS.showToast('Welcome back!', `Logged in as ${res.user.name}`, 'success');
+
+          // Small delay so toast is visible, then redirect
+          setTimeout(() => redirectByRole(res.user.role), 800);
+        }
+      } catch (err) {
+        const msg = err.message || 'Login failed. Please check your credentials.';
+        errorDiv.textContent = '⚠️ ' + msg;
+        errorDiv.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Login to ALMS →';
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('loginPassword');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
   </script>
 </body>
 </html>
