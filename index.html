@@ -1,132 +1,168 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ALMS — Donate Food, Share Hope</title>
-  <style>
-    :root { --bg:#f5efe6; --card:#fffaf4; --brown:#795548; --light-brown:#a67c52; --line:#dfcdbb; --text:#33251d; --muted:#725e50; --green:#318d57; --red:#c4473f; --blue:#3978b9; --amber:#b98255; }
-    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text); font:15px/1.45 Arial, sans-serif; }
-    header { background:linear-gradient(115deg,#c8a27c,#795548); color:#fff; padding:12px max(20px,calc((100% - 1180px)/2)); display:flex; justify-content:space-between; align-items:center; gap:15px; } .brand { display:flex; align-items:center; gap:12px; } .brand-logo { width:54px; height:54px; border-radius:50%; object-fit:cover; object-position:center 34%; background:#fff5e8; border:2px solid #fff4e5; }
-    h1,h2,h3,p { margin:0; } h1 { font-size:30px; } h2 { font-size:20px; } h3 { font-size:16px; } .subtitle { margin-top:5px; opacity:.9; }
-    main { max-width:1180px; margin:22px auto; padding:0 20px 32px; display:grid; grid-template-columns:1.65fr .9fr; gap:18px; }
-    .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px; box-shadow:0 4px 16px #6041280d; }
-    .full { grid-column:1/-1; } .head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
-    button { border:0; border-radius:9px; padding:10px 13px; color:#fff; background:var(--brown); font-weight:700; cursor:pointer; } button:hover { filter:brightness(.94); } .ghost { background:#eee0d1; color:var(--brown); }
-    .danger { background:var(--red); } .pill { display:inline-block; border-radius:99px; padding:4px 8px; font-size:12px; font-weight:bold; }
-    .red { color:var(--red); background:#f8e1de; } .green { color:var(--green); background:#def0e4; } .blue { color:var(--blue); background:#e0ebf6; } .amber { color:#805122; background:#f4e7d8; }
-    .priority { border-left:6px solid var(--amber); margin:10px 0; } .priority.hot { border-color:var(--red); } .priority-top { display:flex; justify-content:space-between; gap:12px; } .priority p { color:var(--muted); font-size:13px; margin-top:5px; }
-    .score { color:var(--red); font-size:20px; font-weight:800; text-align:right; white-space:nowrap; } .meta { font-size:12px; font-weight:bold; margin-top:7px; }
-    .bar { background:#e7d7c7; border-radius:99px; height:10px; overflow:hidden; margin-top:9px; } .bar > div { height:100%; background:var(--green); border-radius:inherit; transition:width .35s ease; }
-    .weights { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; } .weight { padding:9px; background:#f3e8dc; border-radius:10px; font-size:12px; color:var(--muted); } .weight b { display:block; color:var(--brown); font-size:15px; }
-    .action { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:13px 0; border-bottom:1px solid var(--line); } .action:last-child { border:0; padding-bottom:0; } .action p { color:var(--muted); font-size:13px; margin-top:3px; }
-    .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; } .metric { background:#f2e6d9; padding:14px; border-radius:13px; } .metric b { display:block; font-size:23px; color:var(--brown); } .metric small { color:var(--muted); }
-    .legend { display:flex; flex-wrap:wrap; gap:8px; } .notice { display:none; margin-top:12px; padding:10px; color:#166337; background:#def0e4; border-radius:9px; font-weight:bold; }
-    .emergency { background:#f8e1de; border-color:#eab5ae; } .toggle-on { background:var(--red); }
-    select { border:1px solid #d8bfaa; border-radius:8px; padding:9px; background:#fffaf4; color:var(--text); font-weight:bold; }
-    .hero { min-height:310px; position:relative; overflow:hidden; display:flex; align-items:end; background:#513b2e; padding:0; }
-    .hero img { width:100%; height:310px; object-fit:cover; opacity:.68; } .hero-copy { position:absolute; inset:auto 0 0; color:#fff; padding:24px; background:linear-gradient(transparent,rgba(42,28,20,.9)); } .hero-copy h2 { font-size:28px; }
-    .roles { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; } .role { text-align:left; min-height:116px; color:var(--text); background:#f2e6d9; } .role span { display:block; font-size:26px; margin-bottom:8px; } .role small { color:var(--muted); display:block; margin-top:3px; font-weight:400; }
-    .flow { display:none; border:1px dashed #c5a68e; background:#fbf5ee; } .flow.visible { display:block; } .choice-row { display:flex; flex-wrap:wrap; gap:8px; margin:11px 0; } .choice-row button.selected { background:var(--light-brown); }
-    .gallery { display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px; } .gallery figure { margin:0; position:relative; overflow:hidden; height:160px; border-radius:12px; background:#dfcdbb; } .gallery figure:first-child { height:330px; grid-row:span 2; } .gallery img { width:100%; height:100%; object-fit:cover; } .gallery figcaption { position:absolute; bottom:0; width:100%; padding:7px; color:#fff; font-size:12px; background:#2e2118b8; }
-    .rating { display:flex; gap:7px; align-items:center; flex-wrap:wrap; } .star { background:#eee0d1; color:#795548; font-size:20px; padding:3px 8px; } .star.active { background:#d4a353; color:#fff; }
-    .emission-counter { display:flex; align-items:center; gap:15px; margin-top:15px; padding:14px; background:#e3f0e7; border-radius:13px; } .ring { width:72px; height:72px; flex:none; border-radius:50%; display:grid; place-items:center; background:conic-gradient(var(--green) 0deg, #c4dec9 0deg); position:relative; } .ring::after { content:""; position:absolute; width:56px; height:56px; border-radius:50%; background:#e3f0e7; } .ring b { position:relative; z-index:1; color:#21663b; font-size:16px; }
-    .map { position:relative; height:345px; overflow:hidden; border-radius:14px; background:linear-gradient(140deg,#dfd3c4,#f4ebdf 52%,#d7e1d6); border:1px solid #cfbda9; } .map::before { content:""; position:absolute; inset:0; opacity:.45; background:repeating-linear-gradient(25deg,transparent 0 34px,#baaa9855 35px 38px,transparent 39px 75px),repeating-linear-gradient(115deg,transparent 0 55px,#fff9f188 56px 60px,transparent 61px 105px); } .map-label { position:absolute; color:#6d5140; font-size:12px; font-weight:bold; } .map-marker { position:absolute; z-index:2; border:3px solid #fff; width:26px; height:26px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); box-shadow:0 2px 7px #3c2b1b55; cursor:pointer; } .map-marker::after { content:""; position:absolute; width:8px; height:8px; border-radius:50%; background:#fff; top:6px; left:6px; } .map-marker.green{background:var(--green)} .map-marker.red{background:var(--red)} .map-marker.blue{background:var(--blue)} .map-marker.hidden{display:none} .map-tip { position:absolute; z-index:3; display:none; max-width:190px; padding:9px; border-radius:8px; color:#fff; background:#49342a; font-size:12px; box-shadow:0 3px 10px #0003; }
-    @media (max-width:760px) { main { grid-template-columns:1fr; padding:0 13px 24px; } .full{grid-column:auto;} .metrics,.weights{grid-template-columns:repeat(2,1fr);} .roles{grid-template-columns:repeat(2,1fr);} .gallery{grid-template-columns:1fr 1fr}.gallery figure:first-child{grid-column:1/-1;grid-row:auto;height:240px;} header{padding:15px 16px;} h1{font-size:25px;} }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ALMS — Donate food, share hope</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header><div class="brand"><img class="brand-logo" src="images/alms-logo.jpeg" alt="ALMS logo"/><div><h1>ALMS</h1><p class="subtitle" id="tagline">Donate food, share hope.</p></div></div><select aria-label="Choose language" onchange="setLanguage(this.value)"><option value="en">English</option><option value="hi">हिंदी</option><option value="mr">मराठी</option><option value="ta">தமிழ்</option></select></header>
-  <main>
-    <section class="card hero full"><img src="images/sharing.jpeg" alt="A child sharing food with another child" /><div class="hero-copy"><h2 id="heroTitle">Good food belongs on plates, not in landfills.</h2><p id="heroText">Connect surplus food with people who need it—safely, quickly and locally.</p></div></section>
+  <header class="site">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html">
+        <img src="images/alms-logo.jpeg" alt="ALMS logo">
+        <div>
+          <h1>ALMS</h1>
+          <p data-t="tagline">Donate food, share hope.</p>
+        </div>
+      </a>
+      <nav class="links">
+        <a href="#donate" data-t="donate">Donate</a>
+        <a href="#request" data-t="need">Need food</a>
+        <a href="pool.html" data-t="pool">Community pool</a>
+        <a href="dashboard.html">Records</a>
+        <a href="login.html">Log In</a>
+        <a class="cta" href="registration.html?role=volunteer" data-t="vol">Volunteer</a>
+        <select id="language" class="lang" aria-label="Language">
+          <option value="en">English</option>
+          <option value="hi">हिंदी</option>
+          <option value="mr">मराठी</option>
+          <option value="ta">தமிழ்</option>
+        </select>
+      </nav>
+    </div>
+  </header>
 
-    <section class="card full">
-      <div class="head"><div><h2 id="roleTitle">How would you like to use ALMS?</h2><p class="subtitle" style="color:var(--muted)">Choose a role to begin.</p></div></div>
-      <div class="roles"><button class="role" onclick="chooseRole('volunteer')"><span>🙋</span>Volunteer<small>Find and collect nearby food</small></button><button class="role" onclick="chooseRole('ngo')"><span>🏠</span>NGO / shelter<small>Register demand and rate donors</small></button><button class="role" onclick="chooseRole('donor')"><span>🍱</span>Donate food<small>Post surplus food now</small></button><button class="role" onclick="chooseRole('temple')"><span>🛕</span>Temple<small>Donate or request bhandara food</small></button><button class="role" onclick="chooseRole('gurudwara')"><span>☬</span>Gurudwara<small>Donate or request langar food</small></button></div>
-      <div id="roleFlow" class="card flow" style="margin-top:14px"></div>
-    </section>
-    <section class="card full emergency">
-      <div class="head"><div><h2>🚨 Emergency donation response</h2><p class="subtitle" style="color:#7d322c">Activate for floods, disasters, heatwaves or shelter shortages.</p></div><button id="emergencyBtn" class="danger" onclick="toggleEmergency()">Activate emergency mode</button></div>
-      <div id="emergencyMessage" class="notice"></div>
-    </section>
+  <main class="wrap">
+    <div class="offline">Start the ALMS server with <code>npm start</code> so forms can save to the database.</div>
 
-    <section class="card full">
-      <div class="head"><div><h2>Live food rescue map</h2><p class="subtitle" style="color:var(--muted)">Tap a marker to view what is needed nearby.</p></div><div class="choice-row" style="margin:0"><button class="ghost" onclick="filterMap('all')">All</button><button class="ghost" onclick="filterMap('green')">Food</button><button class="ghost" onclick="filterMap('red')">Hunger</button><button class="ghost" onclick="filterMap('blue')">Volunteers</button></div></div>
-      <div class="map" id="rescueMap">
-        <span class="map-label" style="top:12%;left:14%">Rajendra Nagar</span><span class="map-label" style="top:68%;left:62%">Green Park</span><span class="map-label" style="top:35%;left:72%">Sector 18</span>
-        <button class="map-marker green" style="top:23%;left:19%" aria-label="Food available at Rajendra Nagar" data-type="green" data-tip="🟢 Temple bhandara: 120 meals available"></button>
-        <button class="map-marker red" style="top:40%;left:67%" aria-label="High hunger zone at Sector 18" data-type="red" data-tip="🔴 Sector 18: 180 meals urgently needed"></button>
-        <button class="map-marker blue" style="top:64%;left:52%" aria-label="Volunteers nearby at Green Park" data-type="blue" data-tip="🔵 3 volunteers available for pickup"></button>
-        <button class="map-marker green" style="top:73%;left:27%" aria-label="Food available at City Hotel" data-type="green" data-tip="🟢 City Hotel: 80 packed meals available"></button>
-        <button class="map-marker blue" style="top:18%;left:78%" aria-label="Volunteers nearby" data-type="blue" data-tip="🔵 2 volunteers near the wedding venue"></button>
-        <div class="map-tip" id="mapTip"></div>
+    <section class="card carousel">
+      <img class="slide active" src="images/sharing.jpeg" alt="Food sharing">
+      <img class="slide" src="images/meal-distribution.jpeg" alt="Meal distribution">
+      <img class="slide" src="images/community-meal.jpeg" alt="Community meal">
+      <div class="caption">
+        <h2 data-t="hero">Food belongs on plates.</h2>
+        <p data-t="heroSub">Donate surplus meals. ALMS matches them with nearby people, NGOs and volunteers.</p>
       </div>
-      <div class="legend" style="margin-top:12px"><span class="pill green">● Green — food available</span><span class="pill red">● Red — high hunger zone</span><span class="pill blue">● Blue — volunteers nearby</span></div>
+      <div class="dots"></div>
     </section>
 
     <section class="card">
-      <div class="head"><div><h2>AI priority engine</h2><p class="subtitle" style="color:var(--muted)">Urgent needs are automatically shown first.</p></div><button class="ghost" onclick="sortNeeds()">↻ Refresh ranking</button></div>
-      <div class="weights"><div class="weight"><b>30%</b>Food expiry</div><div class="weight"><b>20%</b>NGO urgency</div><div class="weight"><b>18%</b>Quantity & people fed</div><div class="weight"><b>15%</b>Distance</div><div class="weight"><b>10%</b>Weather</div><div class="weight"><b>7%</b>Volunteers & past results</div></div>
-      <div id="priorityList"></div>
+      <h2 data-t="start">Get started</h2>
+      <p class="lead" data-t="startDesc">Choose how you want to help — every role is saved in the ALMS database.</p>
+      <div class="grid roles">
+        <a href="registration.html?role=volunteer"><button class="role" type="button"><span class="icon">🙋</span><span data-t="vol">Volunteer</span><small data-t="volSub">Register & collect</small></button></a>
+        <a href="registration.html?role=ngo"><button class="role" type="button"><span class="icon">🏠</span><span data-t="ngo">NGO / Shelter</span><small data-t="ngoSub">Register demand</small></button></a>
+        <button class="role" type="button" data-scroll="donate"><span class="icon">🍱</span><span data-t="donate">Donate</span><small data-t="donateSub">Post food</small></button>
+        <a href="registration.html?role=religious"><button class="role" type="button"><span class="icon">🛕</span><span data-t="religious">Religious place</span><small data-t="religiousSub">Temple / Gurudwara</small></button></a>
+        <a href="pool.html"><button class="role" type="button"><span class="icon">🤝</span><span data-t="pool">Community pool</span><small data-t="poolSub">See details</small></button></a>
+        <button class="role" type="button" data-scroll="request"><span class="icon">🧡</span><span data-t="need">Need food</span><small data-t="needSub">Individual request</small></button>
+      </div>
     </section>
 
-    <aside class="card">
-      <h2>Live map signals</h2><p class="subtitle" style="color:var(--muted);margin:5px 0 15px">Quick status for every locality.</p>
-      <div class="legend"><span class="pill green">● Food available</span><span class="pill red">● High hunger zone</span><span class="pill blue">● Volunteers nearby</span></div>
-      <div class="action"><div><h3>Green Park community pool</h3><p>Previous collection success: 84%</p></div><span class="pill green">Active</span></div>
-      <p style="font-size:13px;margin-top:12px"><b>Today’s demand collected: <span id="poolPercent">65</span>%</b></p><div class="bar"><div id="poolBar" style="width:65%"></div></div><p style="color:var(--muted);font-size:12px;margin-top:5px"><span id="poolMeals">163</span> of 250 meals gathered by the locality.</p>
-      <button style="margin-top:12px" onclick="addCommunityFood()">Add 25 meals to pool</button>
-    </aside>
-
-    <section class="card full">
-      <h2>Partners, pickups & restaurant alerts</h2>
-      <div class="action"><div><h3>🏪 Restaurant surplus reminder</h3><p>At 9:30 PM, restaurants closing at 10 PM receive: “Will you have surplus food left? Share the quantity and we’ll arrange pickup.”</p></div><button onclick="sendAlert(this)">Send demand alert</button></div>
-      <div class="action"><div><h3>🔔 Automatic donation reminders</h3><p>Prompt regular donors at their chosen time.</p></div><button id="reminderBtn" class="ghost" onclick="toggleReminder()">Reminders on</button></div>
-      <div class="action"><div><h3>🛕 Community partners</h3><p>Temples, gurudwaras, bhandaras, marriages, restaurants, NGOs and volunteer groups can all post or collect food.</p></div><span class="pill blue">Multi-stop pickup enabled</span></div>
+    <section class="grid two">
+      <section class="card" id="donate">
+        <h2 data-t="donateTitle">Donate with ALMS</h2>
+        <p class="lead" data-t="donateDesc">Choose a donation type. Posts are stored and counted toward the community pool.</p>
+        <div class="tabs">
+          <button class="active" type="button" data-mode="regular" data-t="regular">Regular donation</button>
+          <button type="button" data-mode="collab" data-t="collab">Collab donation</button>
+          <button type="button" data-mode="bulk" data-t="bulk">Bulk donation</button>
+        </div>
+        <div id="donationForm"></div>
+      </section>
+      <section class="card">
+        <h2 data-t="ai">Priority engine</h2>
+        <p data-t="aiDesc">Expiry · urgency · people fed · distance · weather · volunteers</p>
+        <div class="metric"><b id="statDonations">—</b><span data-t="statDonations">Donations stored</span></div>
+        <div class="metric"><b>96 priority</b><span data-t="priorityOne">Cooked meals · 45 min left</span></div>
+        <div class="metric"><b>87 priority</b><span data-t="priorityTwo">Wedding food · feeds 250</span></div>
+      </section>
     </section>
 
-    <section class="card full">
-      <h2>Your food rescue impact</h2><div class="metrics" style="margin-top:13px"><div class="metric"><b>180</b><small>people you just fed</small></div><div class="metric"><b>54 kg</b><small>food saved from waste</small></div><div class="metric"><b>92 kg</b><small>CO₂ avoided</small></div><div class="metric"><b>4.9 ★</b><small>community rating</small></div></div>
-      <div class="emission-counter"><div class="ring" id="emissionRing"><b id="emissionPercent">0%</b></div><div><h3>Emission resources saved</h3><p style="color:var(--muted);font-size:13px">Your rescued food has prevented <b><span id="emissionText">0</span>%</b> of the estimated emissions for this rescue route.</p></div></div>
-      <p style="margin-top:14px;color:var(--muted)">🏅 <b>Surplus Saver badge earned.</b> Complete 10 rescues to download your ALMS certificate.</p>
+    <section class="grid two">
+      <section class="card">
+        <h2 data-t="alerts">Demand alerts & reminders</h2>
+        <p data-t="alertsDesc">Restaurants receive a surplus reminder before closing.</p>
+        <div class="tabs">
+          <button id="alertBtn" type="button" data-t="sendAlert">Send demand alert</button>
+          <button id="reminderBtn" type="button" class="btn-ghost" data-t="reminder">Turn on reminders</button>
+        </div>
+        <div class="note" id="alertNote"></div>
+      </section>
+      <section class="card emergency">
+        <h2 data-t="emergency">Emergency donation</h2>
+        <p data-t="emergencyDesc">Proof is compulsory for urgent relief posts.</p>
+        <form id="emergencyForm">
+          <label>Proof photo / PDF
+            <input required name="proof" type="file" accept="image/*,.pdf">
+          </label>
+          <button class="submit danger" data-t="proof" type="submit">Post with proof</button>
+        </form>
+        <div class="note" id="emergencyNote"></div>
+      </section>
     </section>
-    <section class="card full">
-      <div class="head"><div><h2>Food rescue stories</h2><p class="subtitle" style="color:var(--muted)">Every contribution helps a neighbour eat with dignity.</p></div></div>
-      <div class="gallery"><figure><img src="images/community-meal.jpeg" alt="Community members receiving food"/><figcaption>Meals delivered to the community</figcaption></figure><figure><img src="images/children-meal.jpeg" alt="Children sharing a meal"/><figcaption>Locality food pool</figcaption></figure><figure><img src="images/elderly-meal.jpeg" alt="An elderly person eating a meal"/><figcaption>Serving people of every age</figcaption></figure><figure><img src="images/shared-meal.jpeg" alt="Children sharing food"/><figcaption>Community care</figcaption></figure><figure><img src="images/sharing.jpeg" alt="A child sharing food with another child"/><figcaption>Food creates connection</figcaption></figure></div>
+
+    <section class="card" id="request">
+      <h2 data-t="request">Request food</h2>
+      <p class="lead" data-t="requestDesc">For hospital caregivers, patients’ families, elderly people and anyone in need.</p>
+      <form class="form-grid" id="requestForm">
+        <label>Name <input required name="name" placeholder="Your name" data-ph="name"></label>
+        <label>Hospital / locality <input required name="place" placeholder="Hospital / locality" data-ph="place"></label>
+        <label>Meals needed <input required name="meals" type="number" min="1" placeholder="Meals needed" data-ph="meals"></label>
+        <label>Contact number <input required name="contact" placeholder="Contact number" data-ph="contact"></label>
+        <button type="submit" data-t="requestBtn">Request food</button>
+      </form>
+      <div class="note" id="requestNote"></div>
+    </section>
+
+    <section class="card">
+      <h2 data-t="map">Live rescue map</h2>
+      <div class="map">
+        <i class="pin green" style="top:25%;left:20%"></i>
+        <i class="pin red" style="top:43%;left:67%"></i>
+        <i class="pin blue" style="top:64%;left:51%"></i>
+      </div>
+      <div class="legend">
+        <span class="tag green" data-t="green">Green: food</span>
+        <span class="tag red" data-t="red">Red: hunger</span>
+        <span class="tag blue" data-t="blue">Blue: volunteers</span>
+      </div>
+    </section>
+
+    <a href="pool.html">
+      <section class="card pool">
+        <div>
+          <h2 data-t="poolTitle">Green Park community pool</h2>
+          <p id="poolDesc" data-t="poolDesc">163 of 250 meals collected · Tap for details</p>
+        </div>
+        <div class="bar"><i id="poolBar"></i></div>
+      </section>
+    </a>
+
+    <section class="grid two">
+      <section class="card">
+        <h2 data-t="carbon">Carbon footprint</h2>
+        <div class="metric"><b id="carbonValue">92 kg CO₂</b><span data-t="carbonDesc">estimated emissions avoided from stored meals</span></div>
+      </section>
+      <section class="card">
+        <h2 data-t="badge">Network so far</h2>
+        <div class="metric"><b id="statNetwork">—</b><span data-t="badgeDesc">volunteers and NGO / shelter registrations</span></div>
+      </section>
     </section>
   </main>
-  <script>
-    const needs = [
-      {name:'Cooked thali meals', area:'Sector 18 · high hunger zone', expiry:45, meals:180, distance:1.2, ngo:95, weather:90, volunteers:80, collected:42},
-      {name:'Wedding buffet surplus', area:'Green Park locality', expiry:120, meals:250, distance:2.8, ngo:75, weather:60, volunteers:95, collected:65},
-      {name:'Temple bhandara', area:'Rajendra Nagar', expiry:150, meals:120, distance:1.7, ngo:72, weather:55, volunteers:65, collected:30}
-    ];
-    function score(n) { const expiry = Math.max(0,100-n.expiry/2); const quantity = Math.min(100,n.meals/2.5); const distance = Math.max(0,100-n.distance*15); return Math.round(expiry*.30+n.ngo*.20+quantity*.18+distance*.15+n.weather*.10+n.volunteers*.07); }
-    function renderNeeds() { const target=document.querySelector('#priorityList'); target.innerHTML=needs.sort((a,b)=>score(b)-score(a)).map(n=>`<article class="card priority ${score(n)>90?'hot':''}"><div class="priority-top"><div><h3>${n.name}</h3><p>${n.area}</p></div><div class="score">${score(n)}<small style="display:block;font-size:11px">PRIORITY</small></div></div><div class="meta">Expires in ${n.expiry} min · feeds ${n.meals} people · ${n.distance} km away</div><p>Allocation uses food expiry, NGO need, food quantity, travel distance, weather and available volunteers.</p><div class="bar"><div style="width:${n.collected}%"></div></div><p><b>${n.collected}% gathered</b> for this locality’s demand</p></article>`).join(''); }
-    function sortNeeds(){ needs[0].weather=Math.min(100,needs[0].weather+5); renderNeeds(); }
-    function toggleEmergency(){ const btn=document.querySelector('#emergencyBtn'), msg=document.querySelector('#emergencyMessage'); const active=btn.classList.toggle('toggle-on'); btn.textContent=active?'Emergency mode active':'Activate emergency mode'; msg.textContent=active?'Emergency alert sent to nearby restaurants, NGOs, community kitchens and volunteers.':' '; msg.style.display=active?'block':'none'; if(active){needs[0].ngo=100;needs[0].weather=100;renderNeeds();} }
-    let reminder=true; function toggleReminder(){reminder=!reminder;document.querySelector('#reminderBtn').textContent=reminder?'Reminders on':'Reminders off';}
-    function sendAlert(btn){btn.textContent='Alert sent ✓';btn.disabled=true;}
-    let meals=163; function addCommunityFood(){meals=Math.min(250,meals+25);const percent=Math.round(meals/250*100);document.querySelector('#poolMeals').textContent=meals;document.querySelector('#poolPercent').textContent=percent;document.querySelector('#poolBar').style.width=percent+'%';}
-    function chooseRole(role) {
-      const flow=document.querySelector('#roleFlow'); flow.classList.add('visible');
-      const content={
-        volunteer:`<h3>🙋 Volunteer login</h3><p>See blue volunteer-nearby signals, accept a multi-stop pickup, and earn a Community Helper badge.</p><div class="choice-row"><button onclick="finishFlow(this,'Volunteer route assigned — 2 pickups near Green Park.')">Find nearby pickup</button></div>`,
-        ngo:`<h3>🏠 NGO registration & donor ratings</h3><p>Register your meal demand, then rate a completed donor pickup. Ratings award reliable donors with badges.</p><div class="rating"><span>Rate this donor:</span><button class="star" onclick="rateDonor(1)">★</button><button class="star" onclick="rateDonor(2)">★</button><button class="star" onclick="rateDonor(3)">★</button><button class="star" onclick="rateDonor(4)">★</button><button class="star" onclick="rateDonor(5)">★</button></div><p id="ratingResult" style="margin-top:9px;font-weight:bold"></p>`,
-        donor:`<h3>🍱 Donate food</h3><p>Choose a donation type. The AI will then rank the best local pickup allocation.</p><div class="choice-row"><button class="selected" onclick="selectDonation(this,'Regular')">Regular donation</button><button onclick="selectDonation(this,'Collaboration')">Collab donation</button><button onclick="selectDonation(this,'Bulk')">Bulk donation</button></div><div id="bulkOptions"></div><button onclick="finishFlow(this,'Donation posted. Nearby NGOs and volunteers have been notified.')">Post donation</button>`,
-        temple:`<h3>🛕 Temple food partner</h3><p>Post bhandara / prasad surplus as a donor, or request verified meals as a community taker.</p><div class="choice-row"><button onclick="finishFlow(this,'Temple donation listing opened.')">Donate bhandara food</button><button class="ghost" onclick="finishFlow(this,'Food request sent to nearby donors.')">Request food</button></div>`,
-        gurudwara:`<h3>☬ Gurudwara food partner</h3><p>Share langar food as a donor, or request meals for nearby families as a taker.</p><div class="choice-row"><button onclick="finishFlow(this,'Langar donation listing opened.')">Donate langar</button><button class="ghost" onclick="finishFlow(this,'Food request sent to nearby donors.')">Request food</button></div>`
-      }; flow.innerHTML=content[role];
-    }
-    function selectDonation(button,type) { document.querySelectorAll('#roleFlow .choice-row button').forEach(b=>b.classList.remove('selected')); button.classList.add('selected'); document.querySelector('#bulkOptions').innerHTML=type==='Bulk'?`<p style="margin:8px 0;font-weight:bold">Bulk donation source:</p><div class="choice-row"><button class="ghost">University</button><button class="ghost">Wedding</button><button class="ghost">Party</button><button class="ghost">Hotel</button><button class="ghost">Resort</button></div>`:type==='Collaboration'?'<p style="margin:8px 0;color:var(--muted)">Invite neighbours, restaurants or a community group to pool donations for one demand.</p>':''; }
-    function rateDonor(count) { document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('active',i<count)); document.querySelector('#ratingResult').textContent=count>=4?'Great rating! 🌟 Donor receives the Trusted Food Saver badge.':'Rating saved. Complete more safe rescues to unlock badges.'; }
-    function finishFlow(button,message) { const note=document.createElement('p'); note.textContent='✓ '+message; note.style.cssText='margin-top:10px;color:#166337;font-weight:bold'; button.parentElement.appendChild(note); button.disabled=true; }
-    function setLanguage(language) { const words={en:['Donate food, share hope.','Good food belongs on plates, not in landfills.','How would you like to use ALMS?'],hi:['भोजन दान करें, आशा बाँटें।','अच्छा भोजन प्लेटों तक पहुँचना चाहिए, कूड़ेदान तक नहीं।','आप ALMS का उपयोग कैसे करना चाहते हैं?'],mr:['अन्नदान करा, आशा वाटा.','चांगले अन्न ताटात असावे, कचऱ्यात नाही.','तुम्हाला ALMS कसे वापरायचे आहे?'],ta:['உணவை தானம் செய்யுங்கள், நம்பிக்கையைப் பகிருங்கள்.','நல்ல உணவு தட்டில் இருக்க வேண்டும்; குப்பையில் அல்ல.','ALMS-ஐ எப்படிப் பயன்படுத்த விரும்புகிறீர்கள்?']}; const t=words[language]; document.querySelector('#tagline').textContent=t[0]; document.querySelector('#heroTitle').textContent=t[1]; document.querySelector('#roleTitle').textContent=t[2]; }
-    function filterMap(type) { document.querySelectorAll('.map-marker').forEach(marker=>marker.classList.toggle('hidden',type!=='all' && marker.dataset.type!==type)); document.querySelector('#mapTip').style.display='none'; }
-    document.querySelectorAll('.map-marker').forEach(marker=>marker.addEventListener('click',()=>{const tip=document.querySelector('#mapTip');tip.textContent=marker.dataset.tip;tip.style.display='block';tip.style.left=`calc(${marker.style.left} + 18px)`;tip.style.top=`calc(${marker.style.top} - 12px)`;}));
-    function animateEmissionCounter(target=78) { let value=0; const percent=document.querySelector('#emissionPercent'), text=document.querySelector('#emissionText'), ring=document.querySelector('#emissionRing'); const timer=setInterval(()=>{ value=Math.min(target,value+1); percent.textContent=value+'%'; text.textContent=value; ring.style.background=`conic-gradient(var(--green) ${value*3.6}deg, #c4dec9 0deg)`; if(value===target) clearInterval(timer); },18); }
-    renderNeeds();
-    animateEmissionCounter();
-  </script>
+
+  <footer class="site">
+    <div class="wrap footer-inner">
+      <div>ALMS · surplus food rescue for local communities</div>
+      <div><a href="dashboard.html">View stored records</a></div>
+    </div>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/home.js"></script>
 </body>
 </html>
